@@ -3,7 +3,7 @@ package data
 import (
     "database/sql"
     _ "github.com/mattn/go-sqlite3"
-    "fmt"
+    _ "fmt"
     "log"
 )
 
@@ -13,15 +13,16 @@ const (
 
 type Source interface {
     //GET Request to the root "/"
-    GetAllTopics() ([]string, error)
+    GetAllTopics() (string, error)
 }
 
 func GetAllTopics() (string, error) {
+   resp := ""
+
    db, err := sql.Open("sqlite3", sqliteDbPath)
-   
    if err != nil {
         log.Fatal(err)
-        return nil, err
+        return "", err
    }
    defer db.Close()
 
@@ -30,7 +31,7 @@ func GetAllTopics() (string, error) {
 
    if err != nil {
         log.Fatal(err)
-        return nil, err
+        return "", err
    }
     defer rows.Close()
     for rows.Next() {
@@ -38,11 +39,11 @@ func GetAllTopics() (string, error) {
         if err := rows.Scan(&temp); err != nil {
             log.Fatal(err)
         }
-        fmt.Println(temp)
+        resp+=temp+" "
     }
     if err := rows.Err(); err != nil {
         log.Fatal(err)
     }
 
-   return nil, err
+   return resp, err
 }

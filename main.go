@@ -1,16 +1,23 @@
 package main
 
 import (
-    "fmt"
     "log"
     "github.com/gorilla/mux"
     "net/http"
     "github.com/psittacus/Goban/data"
+    "fmt"
 )
 
 func HomeHandler( w http.ResponseWriter, r *http.Request) {
+    resp, err := data.GetAllTopics()
+    if err != nil {
+        log.Fatal(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
     w.WriteHeader(http.StatusOK)
-    fmt.Fprintf(w, data.GetAllTopics())
+    fmt.Fprintf(w,resp)
+    return
 }
 
 func main() {
